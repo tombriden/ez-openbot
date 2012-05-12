@@ -4,8 +4,8 @@ EZB_Conn::EZB_Conn(){
 	m_mac_address = NULL;
 	m_connected = false;
 	m_socket = 0;
-	m_keepalive = new char[1];
 	m_keepalive[0] = KEEP_ALIVE;
+	m_verbose = true;
 }
 
 EZB_Conn::~EZB_Conn(){
@@ -28,6 +28,8 @@ void EZB_Conn::Connect(char* mac_address){
 	if(mac_address){
 		m_mac_address = (char*)malloc(sizeof(char) * (strlen(mac_address)+1));
 		strcpy(m_mac_address, mac_address);
+	}else{
+
 	}
 
 	// allocate a socket
@@ -49,6 +51,7 @@ void EZB_Conn::Connect(char* mac_address){
 		return;
 	}
 
+	Send(m_keepalive, 1);
 	pthread_create(&m_keepalive_thread, NULL, KeepAliveStub, (void*)this);
 
 
@@ -58,18 +61,30 @@ bool EZB_Conn::Connected(){
 	return m_connected;
 }
 
-char* EZB_Conn::Send(char* command_in, int len, int expected_ret_bytes){
+unsigned char* EZB_Conn::Send(unsigned char* command_in, int len, int expected_ret_bytes){
 
-	char buff[255];
+	if(m_verbose){
+		printf("Sending: ");
+		for(int i = 0; i < len; i++)
+			printf("%d ", command_in[i]);
+		printf("\n");
+	}
+
 	write(m_socket, (void*)command_in, len);
-	int ret = 0;
-	char* retval = NULL;
+	unsigned char* retval = NULL;
 
 	if(expected_ret_bytes){
-		ret = read(m_socket, buff, 255);
-		if(ret > 0){
-			retval = new char[ret];
-			memcpy(retval, buff, ret);
+		if(m_verbose)
+			printf("Expecting bytes: %d\n", expected_ret_bytes);
+
+		retval = new unsigned char[expected_ret_bytes];
+		read(m_socket, retval, expected_ret_bytes);
+
+		if(m_verbose){
+			printf("Received: ");
+			for(int i = 0; i < expected_ret_bytes; i++)
+				printf("%d ", retval[i]);
+			printf("\n");
 		}
 	}
 
@@ -78,13 +93,14 @@ char* EZB_Conn::Send(char* command_in, int len, int expected_ret_bytes){
 
 void EZB_Conn::KeepAlive(){
 
+	Send(m_keepalive, 1);
+
 	while(!m_exit){
-		char* retval = Send(m_keepalive, 1);
-		if(retval){
-			printf("Return %d\n", retval[0]);
+		sleep(KEEP_ALIVE_INTERVAL / 2);
+		unsigned char* retval = Send(m_keepalive, 1, 1);
+		if(retval)
 			delete [] retval;
-		}
-		sleep(KEEP_ALIVE_INTERVAL);
+		sleep(KEEP_ALIVE_INTERVAL / 2);
 	}
 }
 

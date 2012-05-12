@@ -8,9 +8,13 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK VERSION_NUM "0.0.0.1\0"
+#define STR_EZSDK VERSION_NUM "0.0.0.2\0"
 #define EZSDK_VERSION_NUM 0,0,0,1
 
+/// Tom		12/05/2012	0.0.0.2
+/// * EZB_Conn: Fixed getting return value
+/// * Digital: Finished class and got it working properly
+///
 /// Tom		12/05/2012	0.0.0.1
 /// First build:
 /// + EZ_SDK: Main class, this is the object referencing projects will access, it holds the objects for controlling servos, ports, etc

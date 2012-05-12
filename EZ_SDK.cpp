@@ -4,6 +4,7 @@ EZ_SDK::EZ_SDK(){
 
 	m_ezb = new EZB_Conn();
 	Servo = new ServoClass(m_ezb);
+	Digital = new DigitalClass(m_ezb);
 }
 
 EZ_SDK::~EZ_SDK(){

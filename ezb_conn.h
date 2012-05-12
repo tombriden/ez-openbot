@@ -1,11 +1,14 @@
+#ifndef _EZ_CONN_H
+#define _EZ_CONN_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/socket.h>
 #include <errno.h>
-#include <pthread.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
+#include <sys/socket.h>
+#include <pthread.h>
 
 #define KEEP_ALIVE 85
 #define KEEP_ALIVE_INTERVAL 4
@@ -17,11 +20,12 @@ private:
 	long m_socket;
 	bool m_exit;
 	bool m_connected;
+	bool m_verbose;
 
 	char* m_mac_address;
 	struct sockaddr_rc m_addr;
 
-	char* m_keepalive;
+	unsigned char m_keepalive[1];
 
 	pthread_t m_keepalive_thread;
 
@@ -63,7 +67,10 @@ public:
 	void Disconnect();
 	bool Connected();
 	void KeepAlive();
-	char* Send(char* command_in, int len, int expected_ret_bytes = 0);
+	unsigned char* Send(unsigned char* command_in, int len, int expected_ret_bytes = 0);
 };
 
 void* KeepAliveStub(void* lParam);
+
+
+#endif

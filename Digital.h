@@ -3,7 +3,7 @@
 
 #include "ezb_conn.h"
 
-class Digital{
+class DigitalClass{
 public:
 	enum DigitalPortEnum{
 		D0 = 0,
@@ -30,7 +30,7 @@ public:
 
 	int MinPoolTimeMS;
 
-	Digital(EZB_Conn* ezb);
+	DigitalClass(EZB_Conn* ezb);
 	bool GetDigitalPort(DigitalPortEnum digitalPort);
 	//
 	// Summary:
