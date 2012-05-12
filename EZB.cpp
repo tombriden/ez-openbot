@@ -1,14 +1,22 @@
-#include "ezb_conn.h"
+#include "EZB.h"
 
-EZB_Conn::EZB_Conn(){
+EZB::EZB(){
+
+	Servo = NULL;
+	Digital = NULL;
+	ADC = NULL;
+	Configuration = NULL;
+
 	m_mac_address = NULL;
 	m_connected = false;
 	m_socket = 0;
-	m_keepalive[0] = KEEP_ALIVE;
+	m_keepalive[0] = EZB::Ping;
 	m_verbose = true;
+	m_firmware = 0;
+	strcpy(m_firmware_str, "");
 }
 
-EZB_Conn::~EZB_Conn(){
+EZB::~EZB(){
 	m_exit = true;
 	pthread_join(m_keepalive_thread, NULL);
 	Disconnect();
@@ -16,7 +24,7 @@ EZB_Conn::~EZB_Conn(){
 	m_mac_address = NULL;
 }
 
-void EZB_Conn::Disconnect(){
+void EZB::Disconnect(){
 
 	if(m_socket){
 		close(m_socket);
@@ -24,7 +32,7 @@ void EZB_Conn::Disconnect(){
 	}
 
 }
-void EZB_Conn::Connect(char* mac_address){
+void EZB::Connect(char* mac_address){
 	if(mac_address){
 		m_mac_address = (char*)malloc(sizeof(char) * (strlen(mac_address)+1));
 		strcpy(m_mac_address, mac_address);
@@ -51,17 +59,51 @@ void EZB_Conn::Connect(char* mac_address){
 		return;
 	}
 
+	CreateObjects();
+	m_connected = true;
+
 	Send(m_keepalive, 1);
 	pthread_create(&m_keepalive_thread, NULL, KeepAliveStub, (void*)this);
 
 
 }
 
-bool EZB_Conn::Connected(){
+void EZB::CreateObjects(){
+	Servo = new ServoClass(this);
+	Digital = new DigitalClass(this);
+	ADC = new ADCClass(this);
+	Configuration = new ConfigurationClass(this);
+
+}
+
+bool EZB::IsConnected(){
 	return m_connected;
 }
 
-unsigned char* EZB_Conn::Send(unsigned char* command_in, int len, int expected_ret_bytes){
+char* EZB::GetFirmwareVersion(){
+
+	if(m_firmware == 0)
+		GetFirmwareVersionRaw();
+
+	sprintf(m_firmware_str, "EZ-B Firmware V%.1f", m_firmware);
+	return m_firmware_str;
+}
+
+double EZB::GetFirmwareVersionRaw(){
+	if(m_firmware == 0){
+		unsigned char command[1];
+		command[0] = EZB::Ping;
+		unsigned char* retval = Send(command, 1, 1);
+		m_firmware = (double)((double)retval[0] / 10);
+	}
+	return m_firmware;
+}
+
+void EZB::SetVerboseLogging(bool verbose){
+	m_verbose = verbose;
+}
+
+unsigned char* EZB::Send(unsigned char* command_in, int len, int expected_ret_bytes){
 
 	if(m_verbose){
 		printf("Sending: ");
@@ -91,21 +133,23 @@ unsigned char* EZB_Conn::Send(unsigned char* command_in, int len, int expected_r
 	return retval;
 }
 
-void EZB_Conn::KeepAlive(){
+void EZB::KeepAlive(){
 
 	Send(m_keepalive, 1);
 
 	while(!m_exit){
 		sleep(KEEP_ALIVE_INTERVAL / 2);
 		unsigned char* retval = Send(m_keepalive, 1, 1);
-		if(retval)
+		if(retval){
+			m_firmware = (double)(retval[0] / 10);
 			delete [] retval;
+		}
 		sleep(KEEP_ALIVE_INTERVAL / 2);
 	}
 }
 
 void* KeepAliveStub(void* lParam){
-	((EZB_Conn*)lParam)->KeepAlive();
+	((EZB*)lParam)->KeepAlive();
 	return NULL;
 }
 

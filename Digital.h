@@ -1,7 +1,7 @@
 #ifndef _DIGITAL
 #define _DIGITAL
 
-#include "ezb_conn.h"
+class EZB;
 
 class DigitalClass{
 public:
@@ -30,7 +30,7 @@ public:
 
 	int MinPoolTimeMS;
 
-	DigitalClass(EZB_Conn* ezb);
+	DigitalClass(EZB* ezb);
 	bool GetDigitalPort(DigitalPortEnum digitalPort);
 	//
 	// Summary:
@@ -50,7 +50,7 @@ public:
 	//     True if successful
 	void SetDigitalPort(DigitalPortEnum digitalPort, bool status);
 private:
-	EZB_Conn* m_ezb;
+	EZB* m_ezb;
 
 };
 

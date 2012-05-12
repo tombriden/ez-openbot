@@ -1,7 +1,7 @@
 #ifndef _ServoClass_H
 #define _ServoClass_H
 
-#include "ezb_conn.h"
+class EZB;
 
 class ServoClass{
 
@@ -44,7 +44,7 @@ public:
 	static const char SERVO_SPEED_FASTEST = 0;
 	static const char SERVO_SPEED_SLOWEST = 10;
 
-	ServoClass(EZB_Conn* ezb);
+	ServoClass(EZB* ezb);
 	double GetNumberOfSecondsSinceLastMove(ServoPortEnum servoPort);
 	int GetServoPosition(ServoPortEnum servoPort);
 	int GetServoSpeed(ServoPortEnum servoPort);
@@ -55,7 +55,7 @@ public:
 	void ReleaseAllServos();
 
 private:
-	EZB_Conn* m_ezb;
+	EZB* m_ezb;
 	servo_info m_servos[NA];
 };
 /*

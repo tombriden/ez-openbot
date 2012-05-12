@@ -1,13 +1,14 @@
 #include "Digital.h"
+#include "EZB.h"
 
-DigitalClass::DigitalClass(EZB_Conn* ezb){
+DigitalClass::DigitalClass(EZB* ezb){
 	m_ezb = ezb;
 	MinPoolTimeMS = 100;
 }
 
 bool DigitalClass::GetDigitalPort(DigitalPortEnum digitalPort){
 	unsigned char command[1];
-	command[0] = digitalPort + EZB_Conn::GetDigitalPort;
+	command[0] = digitalPort + EZB::GetDigitalPort;
 	unsigned char* retval = m_ezb->Send(command, 1, 1);
 	bool ret;
 	if(retval[0])
@@ -35,9 +36,9 @@ bool DigitalClass::GetLastDigitalPortSet(DigitalPortEnum digitalPort){
 void DigitalClass::SetDigitalPort(DigitalPortEnum digitalPort, bool status){
 	unsigned char command[1];
 	if(status)
-		command[0] = digitalPort + EZB_Conn::SetDigitalPortOn;
+		command[0] = digitalPort + EZB::SetDigitalPortOn;
 	else
-		command[0] = digitalPort + EZB_Conn::SetDigitalPortOff;
+		command[0] = digitalPort + EZB::SetDigitalPortOff;
 
 	m_ezb->Send(command, 1);
 }

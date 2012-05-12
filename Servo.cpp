@@ -1,8 +1,9 @@
 #include "Servo.h"
+#include "EZB.h"
 #include <time.h>
 
 
-ServoClass::ServoClass(EZB_Conn* ezb){
+ServoClass::ServoClass(EZB* ezb){
 	m_ezb = ezb;
 
 	time_t now = time(NULL);
@@ -37,13 +38,13 @@ bool ServoClass::IsServoReleased(ServoPortEnum servoPort){
 
 void ServoClass::SetServoPosition(ServoPortEnum servoPort, int position, int speed){
 
-	char command[2];
+	unsigned char command[2];
 
 	if(speed > -1){
 		SetServoSpeed(servoPort, speed);
 	}
 
-	command[0] = servoPort + EZB_Conn::SetServoPosition;
+	command[0] = servoPort + EZB::SetServoPosition;
 	command[1] = position;
 
 	m_ezb->Send(command, 2);
@@ -62,8 +63,8 @@ void ServoClass::SetServoSpeed(ServoPortEnum ServoClassPort, int speed){
 	else if(speed < SERVO_SPEED_FASTEST)
 		speed = SERVO_SPEED_FASTEST;
 
-	char command[2];
-	command[0] = ServoClassPort + EZB_Conn::SetServoSpeed;
+	unsigned char command[2];
+	command[0] = ServoClassPort + EZB::SetServoSpeed;
 	command[1] = speed;
 
 	m_ezb->Send(command, 2);
@@ -77,7 +78,7 @@ void ServoClass::ReleaseServo(ServoPortEnum servoPort){
 
 }
 void ServoClass::ReleaseAllServos(){
-	char command[1];
-	command[0] = 1;
+	unsigned char command[1];
+	command[0] = EZB::ReleaseAllServos;
 	m_ezb->Send(command, 1);
 }

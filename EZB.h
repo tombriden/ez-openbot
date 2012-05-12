@@ -10,10 +10,15 @@
 #include <sys/socket.h>
 #include <pthread.h>
 
-#define KEEP_ALIVE 85
+
+#include "Servo.h"
+#include "Digital.h"
+#include "ADC.h"
+#include "Configuration.h"
+
 #define KEEP_ALIVE_INTERVAL 4
 
-class EZB_Conn{
+class EZB{
 
 private:
 
@@ -21,6 +26,9 @@ private:
 	bool m_exit;
 	bool m_connected;
 	bool m_verbose;
+
+	double m_firmware;
+	char m_firmware_str[20];
 
 	char* m_mac_address;
 	struct sockaddr_rc m_addr;
@@ -61,13 +69,22 @@ public:
 		PlayNote = 230,
 	};
 
-	EZB_Conn();
-	~EZB_Conn();
+	ServoClass* Servo;
+	DigitalClass* Digital;
+	ADCClass* ADC;
+	ConfigurationClass* Configuration;
+
+	EZB();
+	~EZB();
+	void CreateObjects();
 	void Connect(char* mac_address);
 	void Disconnect();
-	bool Connected();
+	bool IsConnected();
+	void SetVerboseLogging(bool verbose);
 	void KeepAlive();
 	unsigned char* Send(unsigned char* command_in, int len, int expected_ret_bytes = 0);
+	char* GetFirmwareVersion();
+	double GetFirmwareVersionRaw();
 };
 
 void* KeepAliveStub(void* lParam);

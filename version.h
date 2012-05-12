@@ -8,9 +8,17 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK VERSION_NUM "0.0.0.2\0"
-#define EZSDK_VERSION_NUM 0,0,0,2
+#define STR_EZSDK VERSION_NUM "0.0.0.3\0"
+#define EZSDK_VERSION_NUM 0,0,0,3
 
+/// Tom		12/05/2012	0.0.0.3
+/// + ADC: Class to get voltage from ports, all features from official Windows sdk ported
+/// + Configuration: Class to set/get config options, although only seems to be blutooth name and a test value?
+/// - EZB_SDK: No point in this as was just a parent for all other classes. Moved objects into EZB_Conn instead
+/// * EZB: Renamed from EZB_Conn and is now the main class
+/// + EZB: Added GetFirmwareVersion and GetFirmwareVersionRaw functions
+/// * HC_SR04: Added class code as much as i can without connecting the sensor
+///
 /// Tom		12/05/2012	0.0.0.2
 /// * EZB_Conn: Fixed getting return value
 /// * Digital: Finished class and got it working properly
