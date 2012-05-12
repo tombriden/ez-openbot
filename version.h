@@ -9,7 +9,7 @@
 #define VERSION_H_
 
 #define STR_EZSDK VERSION_NUM "0.0.0.2\0"
-#define EZSDK_VERSION_NUM 0,0,0,1
+#define EZSDK_VERSION_NUM 0,0,0,2
 
 /// Tom		12/05/2012	0.0.0.2
 /// * EZB_Conn: Fixed getting return value
