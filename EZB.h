@@ -11,12 +11,17 @@
 #include <sys/socket.h>
 #include <pthread.h>
 
-
-
-#include "Servo.h"
-#include "Digital.h"
 #include "ADC.h"
 #include "Configuration.h"
+#include "Digital.h"
+#include "HC_SR04.h"
+#include "I2C.h"
+#include "Movement.h"
+#include "PWM.h"
+#include "Servo.h"
+#include "SureDualAxisCompass.h"
+#include "Tone.h"
+#include "Uart.h"
 
 #define KEEP_ALIVE_INTERVAL 2000
 
@@ -73,10 +78,17 @@ public:
 		PlayNote = 230,
 	};
 
-	ServoClass* Servo;
-	DigitalClass* Digital;
 	ADCClass* ADC;
 	ConfigurationClass* Configuration;
+	DigitalClass* Digital;
+	HC_SR04Class* HCSR04;
+	I2CClass* I2C;
+	MovementClass* Movement;
+	PWMClass* PWM;
+	ServoClass* Servo;
+	SureDualAxisCompassClass* SureDualAxisCompass;
+	ToneClass* Tone;
+	UartClass* Uart;
 
 	EZB();
 	~EZB();

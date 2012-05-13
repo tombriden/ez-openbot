@@ -8,10 +8,19 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK VERSION_NUM "0.0.0.4\0"
-#define EZSDK_VERSION_NUM 0,0,0,4
+#define STR_EZSDK VERSION_NUM "0.0.0.5\0"
+#define EZSDK_VERSION_NUM 0,0,0,5
 
 
+/// Tom		13/05/2012	0.0.0.5
+/// + CompassDirection: Based on official c# code
+/// + I2C: Based on official c# code
+/// + Movement: Based on official c# code
+/// + PWM: Based on official c# code
+/// + SureDualAxisCompass: Based on official c# code
+/// + Tone: Based on official c# code
+/// + Uart: Based on official c# code
+///
 /// Tom		13/05/2012	0.0.0.4
 /// * Rewrote parts to be closer to decompiled  official dll source, eg using the min pool times, the keep alive method, etc
 /// * Finished Configuration and HC_SR04 classes

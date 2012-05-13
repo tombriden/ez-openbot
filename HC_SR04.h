@@ -6,7 +6,7 @@
 
 class EZB;
 
-class HC_SR04{
+class HC_SR04Class{
 private:
 	EZB* m_ezb;
 	struct timespec m_last_request[22];
@@ -14,7 +14,7 @@ private:
 public:
 	static const char MAX_VALUE = 255;
 
-	HC_SR04(EZB* ezb);
+	HC_SR04Class(EZB* ezb);
 	//
 	// Summary:
 	//     To prevent ADC requests from flooding the communication channel, this limit

@@ -86,10 +86,17 @@ void EZB::Connect(char* mac_address){
 }
 
 void EZB::CreateObjects(){
-	Servo = new ServoClass(this);
-	Digital = new DigitalClass(this);
 	ADC = new ADCClass(this);
 	Configuration = new ConfigurationClass(this);
+	Digital = new DigitalClass(this);
+	HCSR04 = new HC_SR04Class(this);
+	I2C = new I2CClass(this);
+	Movement = new MovementClass(this);
+	PWM = new PWMClass(this);
+	Servo = new ServoClass(this);
+	SureDualAxisCompass = new SureDualAxisCompassClass(this);
+	Tone = new ToneClass(this);
+	Uart = new UartClass(this);
 
 }
 
