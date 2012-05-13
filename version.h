@@ -8,10 +8,14 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK_VERSION_NUM "0.0.0.8\0"
-#define EZSDK_VERSION_NUM 0,0,0,8
+#define STR_EZSDK_VERSION_NUM "0.0.0.9\0"
+#define EZSDK_VERSION_NUM 0,0,0,9
 
 
+/// Tom		13/05/2012	0.0.0.9
+/// * EZB: Added a mutex lock around the internal of SendCommand
+/// * ADC: Fixed storing last_values in char not unsigned char
+///
 /// Tom		13/05/2012	0.0.0.8
 /// + BlinkM: Based on official c# code
 /// + BV4113: Based on official c# code

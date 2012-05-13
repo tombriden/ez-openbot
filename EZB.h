@@ -43,6 +43,7 @@ private:
 	unsigned char m_keepalive[1];
 
 	pthread_t m_keepalive_thread;
+	pthread_mutex_t m_send_mutex;
 
 	long m_lastcommand_time;
 

@@ -72,6 +72,7 @@ void EZB::Connect(char* mac_address){
 
 	CreateObjects();
 
+	pthread_mutex_init(&m_send_mutex, NULL);
 	m_connected = true;
 
 	SendCommand(EZB::Ping);
@@ -139,6 +140,7 @@ unsigned char* EZB::SendCommand(unsigned char command, int expected_ret_bytes){
 
 unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int num_args, int expected_ret_bytes){
 
+	pthread_mutex_lock(&m_send_mutex);
 	unsigned char* bytestosend = (unsigned char*)malloc(sizeof(unsigned char) * (1 + num_args));
 
 	bytestosend[0] = command;
@@ -182,6 +184,7 @@ unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int 
 			printf("\n");
 		}
 	}
+	pthread_mutex_unlock(&m_send_mutex);
 
 	return retval;
 }

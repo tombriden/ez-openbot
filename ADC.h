@@ -9,7 +9,7 @@ class ADCClass{
 private:
 	EZB* m_ezb;
 	long m_last_request[8];
-	char m_last_value[8];
+	unsigned char m_last_value[8];
 public:
 	enum ADCPortEnum{
 		ADC0 = 0,
