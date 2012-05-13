@@ -10,13 +10,16 @@ int ADCClass::GetADCValue(ADCPortEnum sendSensor){
 
 	struct timespec now;
 	clock_gettime(1, &now);
-	if(!(MinPoolTimeMS > 0 && m_last_request[sendSensor].tv_nsec + (MinPoolTimeMS * 1000000) > now.tv_nsec)){
+	long nowms = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
+
+	if(MinPoolTimeMS > 0 && m_last_request[sendSensor] + MinPoolTimeMS < nowms){
 		unsigned char* retval = m_ezb->SendCommand(EZB::GetADCValue + sendSensor, 1);
 
 		m_last_value[sendSensor] = retval[0];
 		delete [] retval;
 
-		clock_gettime(1, &m_last_request[sendSensor]);
+		clock_gettime(1, &now);
+		m_last_request[sendSensor] = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 	}
 	return m_last_value[sendSensor];
 

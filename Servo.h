@@ -33,7 +33,7 @@ public:
 	};
 
 	typedef struct{
-		struct timespec last_move_time;
+		long last_move_time;
 		char curr_pos;
 		char curr_speed;
 		bool isreleased;

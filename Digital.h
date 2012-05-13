@@ -53,7 +53,7 @@ public:
 	void SetDigitalPort(DigitalPortEnum digitalPort, bool status);
 private:
 	EZB* m_ezb;
-	struct timespec m_last_request[20];
+	long m_last_request[20];
 	bool m_last_value[20];
 
 };

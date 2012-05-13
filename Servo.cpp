@@ -8,10 +8,12 @@ ServoClass::ServoClass(EZB* ezb){
 
 	struct timespec now;
 	clock_gettime(1, &now);
+	long nowms = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
+
 	for(int i = 0; i < NA; i++){
 		m_servos[i].curr_pos = 0;
 		m_servos[i].curr_speed = 0;
-		m_servos[i].last_move_time = now;
+		m_servos[i].last_move_time = nowms;
 		m_servos[i].isreleased = true;
 	}
 
@@ -21,8 +23,9 @@ double ServoClass::GetNumberOfSecondsSinceLastMove(ServoPortEnum servoPort){
 	struct timespec now;
 	clock_gettime(1, &now);
 
+	long nowms = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 
-	double num_seconds = now.tv_sec - m_servos[servoPort].last_move_time.tv_sec;
+	double num_seconds = (double)(((double)nowms - (double)m_servos[servoPort].last_move_time) / 1000);
 	return num_seconds;
 }
 
@@ -56,7 +59,9 @@ void ServoClass::SetServoPosition(ServoPortEnum servoPort, int position, int spe
 
 	m_servos[servoPort].curr_pos = position;
 	m_servos[servoPort].isreleased = false;
-	clock_gettime(1, &m_servos[servoPort].last_move_time);
+	struct timespec now;
+	clock_gettime(1, &now);
+	m_servos[servoPort].last_move_time = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 
 	if(servoPort != NA)
 		m_ezb->SendCommand(servoPort + EZB::SetServoPosition, args, 1);
@@ -112,7 +117,9 @@ void ServoClass::ReleaseServo(ServoPortEnum servoPort){
 			m_ezb->SendCommand(servoPort + EZB::SetServoPosition, args, 1);
 
 		m_servos[servoPort].isreleased = true;
-		clock_gettime(1, &m_servos[servoPort].last_move_time);
+		struct timespec now;
+		clock_gettime(1, &now);
+		m_servos[servoPort].last_move_time = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 	}
 
 }
@@ -120,6 +127,9 @@ void ServoClass::ReleaseAllServos(){
 	m_ezb->SendCommand(EZB::ReleaseAllServos);
 	for(int i = 0; i < NA; i++){
 		m_servos[i].isreleased = true;
-		clock_gettime(1, &m_servos[i].last_move_time);
+
+		struct timespec now;
+		clock_gettime(1, &now);
+		m_servos[i].last_move_time = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 	}
 }

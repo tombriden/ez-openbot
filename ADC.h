@@ -8,7 +8,7 @@ class EZB;
 class ADCClass{
 private:
 	EZB* m_ezb;
-	struct timespec m_last_request[8];
+	long m_last_request[8];
 	char m_last_value[8];
 public:
 	enum ADCPortEnum{

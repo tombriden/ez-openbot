@@ -108,6 +108,8 @@ public:
 	double GetFirmwareVersionRaw();
 
 	void ConnectionCheck();
+
+	static char* VersionNumber();
 };
 
 void* ConnectionCheckStub(void* lParam);

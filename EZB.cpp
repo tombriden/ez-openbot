@@ -1,4 +1,5 @@
 #include "EZB.h"
+#include "version.h"
 
 EZB::EZB(){
 
@@ -25,8 +26,10 @@ EZB::~EZB(){
 		m_keepalive_thread = 0;
 	}
 	Disconnect();
-	free(m_mac_address);
-	m_mac_address = NULL;
+	if(m_mac_address){
+		free(m_mac_address);
+		m_mac_address = NULL;
+	}
 }
 
 void EZB::Disconnect(){
@@ -216,9 +219,11 @@ void EZB::ConnectionCheck(){
 	}
 }
 
+char* EZB::VersionNumber(){
+	return STR_EZSDK_VERSION_NUM;
+}
 
 void* ConnectionCheckStub(void* lParam){
 	((EZB*)lParam)->ConnectionCheck();
 	return NULL;
 }
-

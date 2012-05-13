@@ -10,7 +10,10 @@ bool DigitalClass::GetDigitalPort(DigitalPortEnum digitalPort){
 
 	struct timespec now;
 	clock_gettime(1, &now);
-	if(!(MinPoolTimeMS > 0 && m_last_request[digitalPort].tv_nsec + (MinPoolTimeMS * 1000000) > now.tv_nsec)){
+
+	long nowms = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
+
+	if(MinPoolTimeMS > 0 && m_last_request[digitalPort] + MinPoolTimeMS < nowms){
 		unsigned char* retval = m_ezb->SendCommand(digitalPort + EZB::GetDigitalPort, 1);
 		if(retval[0])
 			m_last_value[digitalPort] = true;
@@ -19,7 +22,8 @@ bool DigitalClass::GetDigitalPort(DigitalPortEnum digitalPort){
 
 		delete [] retval;
 
-		clock_gettime(1, &m_last_request[digitalPort]);
+		clock_gettime(1, &now);
+		m_last_request[digitalPort] = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 	}
 	return m_last_value[digitalPort];
 }
@@ -37,9 +41,9 @@ bool DigitalClass::GetLastDigitalPortSet(DigitalPortEnum digitalPort){
 
 void DigitalClass::SetDigitalPort(DigitalPortEnum digitalPort, bool status){
 	if(status)
-		m_ezb->SendCommand(digitalPort + EZB::SetDigitalPortOn, 1);
+		m_ezb->SendCommand(digitalPort + EZB::SetDigitalPortOn);
 	else
-		m_ezb->SendCommand(digitalPort + EZB::SetDigitalPortOff, 1);
+		m_ezb->SendCommand(digitalPort + EZB::SetDigitalPortOff);
 
 	m_last_value[digitalPort] = status;
 }

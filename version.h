@@ -8,10 +8,16 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK VERSION_NUM "0.0.0.5\0"
-#define EZSDK_VERSION_NUM 0,0,0,5
+#define STR_EZSDK_VERSION_NUM "0.0.0.6\0"
+#define EZSDK_VERSION_NUM 0,0,0,6
 
 
+/// Tom		13/05/2012	0.0.0.6
+/// * Servo/Digital/ADC: Fixed checking if minpooltime has passed and now store last request time in ms
+/// * Digital: Fixed SetDigitalPort
+/// * EZB: Only free mac_address if its not null
+/// + EZB: Added function to get vn num
+///
 /// Tom		13/05/2012	0.0.0.5
 /// + CompassDirection: Based on official c# code
 /// + I2C: Based on official c# code
