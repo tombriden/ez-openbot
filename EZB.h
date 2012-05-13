@@ -44,7 +44,10 @@ private:
 
 	pthread_t m_keepalive_thread;
 
-	time_t m_lastcommand_time;
+	long m_lastcommand_time;
+
+	void CreateObjects();
+	bool KeepAlive();
 
 public:
 
@@ -92,13 +95,11 @@ public:
 
 	EZB();
 	~EZB();
-	void CreateObjects();
 	void Connect(char* mac_address);
 	void Disconnect();
 	bool IsConnected();
 	void SetVerboseLogging(bool verbose);
 	time_t LastCommandTime();
-	bool KeepAlive();
 	void SendCommand(unsigned char command);
 	void SendCommand(unsigned char command, unsigned char* args, int num_args);
 	unsigned char* SendCommand(unsigned char command, unsigned char* args, int num_args, int expected_ret_bytes);
@@ -106,9 +107,7 @@ public:
 	void SetLEDStatus(bool status);
 	char* GetFirmwareVersion();
 	double GetFirmwareVersionRaw();
-
 	void ConnectionCheck();
-
 	static char* VersionNumber();
 };
 

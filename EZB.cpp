@@ -159,7 +159,9 @@ unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int 
 
 
 	write(m_socket, (void*)bytestosend, num_args+1);
-	m_lastcommand_time = time(NULL);
+	struct timespec now;
+	clock_gettime(1, &now);
+	m_lastcommand_time = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
 
 	free(bytestosend);
 
