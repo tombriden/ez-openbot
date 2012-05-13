@@ -1,6 +1,8 @@
 #ifndef _DIGITAL
 #define _DIGITAL
 
+#include <time.h>
+
 class EZB;
 
 class DigitalClass{
@@ -51,6 +53,8 @@ public:
 	void SetDigitalPort(DigitalPortEnum digitalPort, bool status);
 private:
 	EZB* m_ezb;
+	struct timespec m_last_request[20];
+	bool m_last_value[20];
 
 };
 

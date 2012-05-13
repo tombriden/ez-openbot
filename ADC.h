@@ -2,13 +2,14 @@
 #define _ADC_H
 
 #include <time.h>
+#include <unistd.h>
 
 class EZB;
 class ADCClass{
 private:
 	EZB* m_ezb;
-	time_t last_request[8];
-	char last_value[8];
+	struct timespec m_last_request[8];
+	char m_last_value[8];
 public:
 	enum ADCPortEnum{
 		ADC0 = 0,

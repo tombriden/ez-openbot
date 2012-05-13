@@ -8,16 +8,17 @@ ADCClass::ADCClass(EZB* ezb){
 
 int ADCClass::GetADCValue(ADCPortEnum sendSensor){
 
-	unsigned char command[1];
-	command[0] = EZB::GetADCValue + sendSensor;
+	struct timespec now;
+	clock_gettime(1, &now);
+	if(!(MinPoolTimeMS > 0 && m_last_request[sendSensor].tv_nsec + (MinPoolTimeMS * 1000000) > now.tv_nsec)){
+		unsigned char* retval = m_ezb->SendCommand(EZB::GetADCValue + sendSensor, 1);
 
-	unsigned char* retval = m_ezb->Send(command, 1, 1);
+		m_last_value[sendSensor] = retval[0];
+		delete [] retval;
 
-	unsigned char adc_value;
-	adc_value = retval[0];
-	delete [] retval;
-
-	return adc_value;
+		clock_gettime(1, &m_last_request[sendSensor]);
+	}
+	return m_last_value[sendSensor];
 
 }
 
@@ -28,5 +29,5 @@ float ADCClass::GetADCVoltage(ADCPortEnum sendSensor){
 
 float ADCClass::GetADCVoltageFromValue(int adcValue){
 
-	return (float)((float)adcValue / 255) * 5;
+	return (float)((float)adcValue * 0.01960784f);
 }

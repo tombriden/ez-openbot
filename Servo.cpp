@@ -6,7 +6,8 @@
 ServoClass::ServoClass(EZB* ezb){
 	m_ezb = ezb;
 
-	time_t now = time(NULL);
+	struct timespec now;
+	clock_gettime(1, &now);
 	for(int i = 0; i < NA; i++){
 		m_servos[i].curr_pos = 0;
 		m_servos[i].curr_speed = 0;
@@ -17,9 +18,11 @@ ServoClass::ServoClass(EZB* ezb){
 }
 
 double ServoClass::GetNumberOfSecondsSinceLastMove(ServoPortEnum servoPort){
-	time_t now = time(NULL);
-	double num_seconds = now - m_servos[servoPort].last_move_time;
+	struct timespec now;
+	clock_gettime(1, &now);
 
+
+	double num_seconds = now.tv_sec - m_servos[servoPort].last_move_time.tv_sec;
 	return num_seconds;
 }
 
@@ -38,47 +41,85 @@ bool ServoClass::IsServoReleased(ServoPortEnum servoPort){
 
 void ServoClass::SetServoPosition(ServoPortEnum servoPort, int position, int speed){
 
-	unsigned char command[2];
+	if(position > SERVO_MAX)
+		position = SERVO_MAX;
+	else if(position < SERVO_MIN)
+		position = SERVO_MIN;
+
+	unsigned char args[1];
 
 	if(speed > -1){
 		SetServoSpeed(servoPort, speed);
 	}
 
-	command[0] = servoPort + EZB::SetServoPosition;
-	command[1] = position;
-
-	m_ezb->Send(command, 2);
+	args[0] = position;
 
 	m_servos[servoPort].curr_pos = position;
-	if(position == SERVO_OFF)
-		m_servos[servoPort].isreleased = true;
-	else
-		m_servos[servoPort].isreleased = false;
-	m_servos[servoPort].last_move_time = time(NULL);
+	m_servos[servoPort].isreleased = false;
+	clock_gettime(1, &m_servos[servoPort].last_move_time);
+
+	if(servoPort != NA)
+		m_ezb->SendCommand(servoPort + EZB::SetServoPosition, args, 1);
 }
 
-void ServoClass::SetServoSpeed(ServoPortEnum ServoClassPort, int speed){
+void ServoClass::SetServoPositionScalar(ServoPortEnum servoPort, int servoMin, int servoMax, int clientWidthMin, int clientWidthMax, int clientPosition, bool invert){
+	SetServoPositionScalar(servoPort, servoMin, servoMax, (float)clientWidthMin, (float)clientWidthMax, (float)clientPosition, invert);
+}
+void ServoClass::SetServoPositionScalar(ServoPortEnum servoPort, int servoMin, int servoMax, float clientWidthMin, float clientWidthMax, float clientPosition, bool invert)
+{
+	if (clientWidthMin < 0.0f){
+		clientWidthMax += abs(clientWidthMin);
+		clientPosition += abs(clientWidthMin);
+		clientWidthMin = 0.0f;
+	}
+
+	float num = ((float)(servoMax - servoMin)) / (clientWidthMax - clientWidthMin);
+	int position = (int) (num * clientPosition);
+	if (invert)
+		position = servoMax - position;
+	else
+		position += servoMin;
+
+	if (position > servoMax)
+		position = servoMax;
+
+	if (position < servoMin)
+		position = servoMin;
+
+	SetServoPosition(servoPort, position);
+}
+
+void ServoClass::SetServoSpeed(ServoPortEnum servoPort, int speed){
 	if(speed > SERVO_SPEED_SLOWEST)
 		speed = SERVO_SPEED_SLOWEST;
 	else if(speed < SERVO_SPEED_FASTEST)
 		speed = SERVO_SPEED_FASTEST;
 
-	unsigned char command[2];
-	command[0] = ServoClassPort + EZB::SetServoSpeed;
-	command[1] = speed;
+	unsigned char args[1];
+	args[0] = speed;
+	m_servos[servoPort].curr_speed = speed;
 
-	m_ezb->Send(command, 2);
-
-	m_servos[ServoClassPort].curr_speed = speed;
+	if(servoPort != NA)
+		m_ezb->SendCommand(servoPort + EZB::SetServoSpeed, args, 1);
 }
 
 void ServoClass::ReleaseServo(ServoPortEnum servoPort){
-	if(!m_servos[servoPort].isreleased)
-		SetServoPosition(servoPort, 0);
+	if(!m_servos[servoPort].isreleased){
+		unsigned char args[1];
+		args[0] = SERVO_OFF;
+
+		if(servoPort != NA)
+			m_ezb->SendCommand(servoPort + EZB::SetServoPosition, args, 1);
+
+		m_servos[servoPort].isreleased = true;
+		clock_gettime(1, &m_servos[servoPort].last_move_time);
+	}
 
 }
 void ServoClass::ReleaseAllServos(){
-	unsigned char command[1];
-	command[0] = EZB::ReleaseAllServos;
-	m_ezb->Send(command, 1);
+	m_ezb->SendCommand(EZB::ReleaseAllServos);
+	for(int i = 0; i < NA; i++){
+		m_servos[i].isreleased = true;
+		clock_gettime(1, &m_servos[i].last_move_time);
+	}
 }

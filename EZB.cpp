@@ -12,13 +12,18 @@ EZB::EZB(){
 	m_socket = 0;
 	m_keepalive[0] = EZB::Ping;
 	m_verbose = true;
-	m_firmware = 0;
+	m_firmware = -1;
 	strcpy(m_firmware_str, "");
+	m_lastcommand_time = time(NULL);
+	m_exit = false;
 }
 
 EZB::~EZB(){
 	m_exit = true;
-	pthread_join(m_keepalive_thread, NULL);
+	if(m_keepalive_thread){
+		pthread_join(m_keepalive_thread, NULL);
+		m_keepalive_thread = 0;
+	}
 	Disconnect();
 	free(m_mac_address);
 	m_mac_address = NULL;
@@ -33,6 +38,11 @@ void EZB::Disconnect(){
 
 }
 void EZB::Connect(char* mac_address){
+
+	if(m_connected)
+		throw std::runtime_error("Already connected");
+
+
 	if(mac_address){
 		m_mac_address = (char*)malloc(sizeof(char) * (strlen(mac_address)+1));
 		strcpy(m_mac_address, mac_address);
@@ -54,16 +64,23 @@ void EZB::Connect(char* mac_address){
 	if(status < 0){
 		char error[512];
 		sprintf(error, "%s", strerror(errno));
-		//throw std::runtime_error(error);
-		printf(error);
-		return;
+		throw std::runtime_error(error);
 	}
 
 	CreateObjects();
+
 	m_connected = true;
 
-	Send(m_keepalive, 1);
-	pthread_create(&m_keepalive_thread, NULL, KeepAliveStub, (void*)this);
+	SendCommand(EZB::Ping);
+	usleep(1000000);
+
+
+
+	if(!KeepAlive())
+		throw std::runtime_error("Controller not responding");
+
+
+	pthread_create(&m_keepalive_thread, NULL, ConnectionCheckStub, (void*)this);
 
 
 }
@@ -83,19 +100,14 @@ bool EZB::IsConnected(){
 char* EZB::GetFirmwareVersion(){
 
 	if(m_firmware == 0)
-		GetFirmwareVersionRaw();
+		sprintf(m_firmware_str, "Unknown Firmware");
+	else
+		sprintf(m_firmware_str, "EZ-B Firmware V%.1f", m_firmware);
 
-	sprintf(m_firmware_str, "EZ-B Firmware V%.1f", m_firmware);
 	return m_firmware_str;
 }
 
 double EZB::GetFirmwareVersionRaw(){
-	if(m_firmware == 0){
-		unsigned char command[1];
-		command[0] = EZB::Ping;
-		unsigned char* retval = Send(command, 1, 1);
-		m_firmware = (double)((double)retval[0] / 10);
-	}
 	return m_firmware;
 }
 
@@ -103,16 +115,44 @@ void EZB::SetVerboseLogging(bool verbose){
 	m_verbose = verbose;
 }
 
-unsigned char* EZB::Send(unsigned char* command_in, int len, int expected_ret_bytes){
+void EZB::SendCommand(unsigned char command){
+	SendCommand(command, NULL, 0, 0);
+}
+
+void EZB::SendCommand(unsigned char command, unsigned char* args, int num_args){
+	SendCommand(command, args, num_args, 0);
+}
+
+unsigned char* EZB::SendCommand(unsigned char command, int expected_ret_bytes){
+	return SendCommand(command, NULL, 0, expected_ret_bytes);
+}
+
+unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int num_args, int expected_ret_bytes){
+
+	unsigned char* bytestosend = (unsigned char*)malloc(sizeof(unsigned char) * (1 + num_args));
+
+	bytestosend[0] = command;
+	for(int i = 0; i < num_args; i++)
+		bytestosend[i+1] = args[0];
 
 	if(m_verbose){
 		printf("Sending: ");
-		for(int i = 0; i < len; i++)
-			printf("%d ", command_in[i]);
+		for(int i = 0; i <= num_args; i++)
+			printf("%d ", bytestosend[i]);
 		printf("\n");
 	}
 
-	write(m_socket, (void*)command_in, len);
+	if(command == EZB::Unknown)
+		throw std::runtime_error("Unknown command");
+	else if(!m_connected)
+		throw std::runtime_error("Not connected");
+
+
+	write(m_socket, (void*)bytestosend, num_args+1);
+	m_lastcommand_time = time(NULL);
+
+	free(bytestosend);
+
 	unsigned char* retval = NULL;
 
 	if(expected_ret_bytes){
@@ -120,6 +160,7 @@ unsigned char* EZB::Send(unsigned char* command_in, int len, int expected_ret_by
 			printf("Expecting bytes: %d\n", expected_ret_bytes);
 
 		retval = new unsigned char[expected_ret_bytes];
+		memset(retval, 0, expected_ret_bytes);
 		read(m_socket, retval, expected_ret_bytes);
 
 		if(m_verbose){
@@ -133,23 +174,44 @@ unsigned char* EZB::Send(unsigned char* command_in, int len, int expected_ret_by
 	return retval;
 }
 
-void EZB::KeepAlive(){
+void EZB::SetLEDStatus(bool status){
+	unsigned char arg[1];
+	if(status)
+		arg[0] = 1;
+	else
+		arg[0] = 0;
+	SendCommand(EZB::StatusLED, arg, 1);
+}
 
-	Send(m_keepalive, 1);
+bool EZB::KeepAlive(){
+
+	unsigned char* retval = SendCommand(EZB::Ping, 1);
+	if(retval[0] <= 15){
+		m_firmware = retval[0];
+	}else{
+		m_firmware = (double)((double)retval[0] / 10);
+
+	}
+	delete [] retval;
+
+	return m_firmware != 0;
+}
+
+
+void EZB::ConnectionCheck(){
 
 	while(!m_exit){
-		sleep(KEEP_ALIVE_INTERVAL / 2);
-		unsigned char* retval = Send(m_keepalive, 1, 1);
-		if(retval){
-			m_firmware = (double)(retval[0] / 10);
-			delete [] retval;
+		if(m_lastcommand_time + (KEEP_ALIVE_INTERVAL/1000) <= time(NULL) && !KeepAlive()){
+			m_connected = false;
+			break;
 		}
-		sleep(KEEP_ALIVE_INTERVAL / 2);
+		usleep(KEEP_ALIVE_INTERVAL * 1000);
 	}
 }
 
-void* KeepAliveStub(void* lParam){
-	((EZB*)lParam)->KeepAlive();
+
+void* ConnectionCheckStub(void* lParam){
+	((EZB*)lParam)->ConnectionCheck();
 	return NULL;
 }
 

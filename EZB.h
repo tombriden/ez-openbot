@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdexcept>
 #include <errno.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
@@ -11,12 +12,13 @@
 #include <pthread.h>
 
 
+
 #include "Servo.h"
 #include "Digital.h"
 #include "ADC.h"
 #include "Configuration.h"
 
-#define KEEP_ALIVE_INTERVAL 4
+#define KEEP_ALIVE_INTERVAL 2000
 
 class EZB{
 
@@ -36,6 +38,8 @@ private:
 	unsigned char m_keepalive[1];
 
 	pthread_t m_keepalive_thread;
+
+	time_t m_lastcommand_time;
 
 public:
 
@@ -81,13 +85,20 @@ public:
 	void Disconnect();
 	bool IsConnected();
 	void SetVerboseLogging(bool verbose);
-	void KeepAlive();
-	unsigned char* Send(unsigned char* command_in, int len, int expected_ret_bytes = 0);
+	time_t LastCommandTime();
+	bool KeepAlive();
+	void SendCommand(unsigned char command);
+	void SendCommand(unsigned char command, unsigned char* args, int num_args);
+	unsigned char* SendCommand(unsigned char command, unsigned char* args, int num_args, int expected_ret_bytes);
+	unsigned char* SendCommand(unsigned char command, int expected_ret_bytes);
+	void SetLEDStatus(bool status);
 	char* GetFirmwareVersion();
 	double GetFirmwareVersionRaw();
+
+	void ConnectionCheck();
 };
 
-void* KeepAliveStub(void* lParam);
+void* ConnectionCheckStub(void* lParam);
 
 
 #endif

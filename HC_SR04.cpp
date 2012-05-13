@@ -3,21 +3,20 @@
 
 HC_SR04::HC_SR04(EZB* ezb){
 	m_ezb = ezb;
-
+	MinPoolTimeMS = 200;
 }
 
 int HC_SR04::GetValue(DigitalClass::DigitalPortEnum triggerPort, DigitalClass::DigitalPortEnum echoPort){
 
-	unsigned char command[2];
-	command[0] = EZB::HC_SR04;
-	command[1] = 2;
-
-	unsigned char* retval = m_ezb->Send(command, 2, 1);
-
-	m_last_request[triggerPort] = time(NULL);
-	m_last_value[triggerPort] = retval[0];
-
-	delete [] retval;
-
+	struct timespec now;
+	clock_gettime(1, &now);
+	if(!(MinPoolTimeMS > 0 && m_last_request[triggerPort].tv_nsec + (MinPoolTimeMS*1000000) > now.tv_nsec)){
+		unsigned char args[1];
+		args[0] = echoPort;
+		unsigned char* retval = m_ezb->SendCommand(EZB::HC_SR04 + triggerPort, args, 1, 1);
+		m_last_value[triggerPort] = retval[0];
+		delete [] retval;
+		clock_gettime(1, &m_last_request[triggerPort]);
+	}
 	return m_last_value[triggerPort];
 }

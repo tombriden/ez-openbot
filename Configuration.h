@@ -7,7 +7,6 @@ class EZB;
 class ConfigurationClass{
 private:
 	EZB* m_ezb;
-	int m_bluetoothname_maxlen;
 public:
 	enum ConfigurationEnum{
 		Single_Value_Test = 10,
@@ -17,7 +16,8 @@ public:
 		BluetoothName = 0,
 	};
 
-	char* strBluetoothName;
+	void BluetoothName_Set(unsigned char* value);
+	unsigned char* BluetoothName_Get();
 
 	ConfigurationClass(EZB* ezb);
 

@@ -8,9 +8,14 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK VERSION_NUM "0.0.0.3\0"
-#define EZSDK_VERSION_NUM 0,0,0,3
+#define STR_EZSDK VERSION_NUM "0.0.0.4\0"
+#define EZSDK_VERSION_NUM 0,0,0,4
 
+
+/// Tom		13/05/2012	0.0.0.4
+/// * Rewrote parts to be closer to decompiled  official dll source, eg using the min pool times, the keep alive method, etc
+/// * Finished Configuration and HC_SR04 classes
+///
 /// Tom		12/05/2012	0.0.0.3
 /// + ADC: Class to get voltage from ports, all features from official Windows sdk ported
 /// + Configuration: Class to set/get config options, although only seems to be blutooth name and a test value?

@@ -9,8 +9,8 @@ class EZB;
 class HC_SR04{
 private:
 	EZB* m_ezb;
-	time_t m_last_request[22];
-	char m_last_value[22];
+	struct timespec m_last_request[22];
+	unsigned char m_last_value[22];
 public:
 	static const char MAX_VALUE = 255;
 

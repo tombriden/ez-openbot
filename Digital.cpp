@@ -7,23 +7,25 @@ DigitalClass::DigitalClass(EZB* ezb){
 }
 
 bool DigitalClass::GetDigitalPort(DigitalPortEnum digitalPort){
-	unsigned char command[1];
-	command[0] = digitalPort + EZB::GetDigitalPort;
-	unsigned char* retval = m_ezb->Send(command, 1, 1);
-	bool ret;
-	if(retval[0])
-		ret = true;
-	else
-		ret = false;
 
-	delete [] retval;
+	struct timespec now;
+	clock_gettime(1, &now);
+	if(!(MinPoolTimeMS > 0 && m_last_request[digitalPort].tv_nsec + (MinPoolTimeMS * 1000000) > now.tv_nsec)){
+		unsigned char* retval = m_ezb->SendCommand(digitalPort + EZB::GetDigitalPort, 1);
+		if(retval[0])
+			m_last_value[digitalPort] = true;
+		else
+			m_last_value[digitalPort] = false;
 
-	return ret;
+		delete [] retval;
+
+		clock_gettime(1, &m_last_request[digitalPort]);
+	}
+	return m_last_value[digitalPort];
 }
 
 int DigitalClass::GetDigitalPortAsInt(DigitalPortEnum digitalPort){
-	bool status = GetDigitalPort(digitalPort);
-	if(status)
+	if( GetDigitalPort(digitalPort))
 		return 1;
 	else
 		return 0;
@@ -34,11 +36,10 @@ bool DigitalClass::GetLastDigitalPortSet(DigitalPortEnum digitalPort){
 }
 
 void DigitalClass::SetDigitalPort(DigitalPortEnum digitalPort, bool status){
-	unsigned char command[1];
 	if(status)
-		command[0] = digitalPort + EZB::SetDigitalPortOn;
+		m_ezb->SendCommand(digitalPort + EZB::SetDigitalPortOn, 1);
 	else
-		command[0] = digitalPort + EZB::SetDigitalPortOff;
+		m_ezb->SendCommand(digitalPort + EZB::SetDigitalPortOff, 1);
 
-	m_ezb->Send(command, 1);
+	m_last_value[digitalPort] = status;
 }
