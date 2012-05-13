@@ -8,10 +8,16 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK_VERSION_NUM "0.0.0.7\0"
-#define EZSDK_VERSION_NUM 0,0,0,7
+#define STR_EZSDK_VERSION_NUM "0.0.0.8\0"
+#define EZSDK_VERSION_NUM 0,0,0,8
 
 
+/// Tom		13/05/2012	0.0.0.8
+/// + BlinkM: Based on official c# code
+/// + BV4113: Based on official c# code
+/// + BV4615: Based on official c# code
+/// + MP3Trigger: Based on official c# code
+///
 /// Tom		13/05/2012	0.0.0.7
 /// * EZB: Store last command time in milliseconds
 /// * EZB: Made KeepAlive and CreateObjects private
