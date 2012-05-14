@@ -3,14 +3,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+
 #include <stdexcept>
 #include <errno.h>
+#ifdef _WINDOWS
+#include "windows_ports.h"
+#else
+#include <unistd.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
 #include <sys/socket.h>
 #include <pthread.h>
 
+#endif
 #include "ADC.h"
 #include "Configuration.h"
 #include "Digital.h"
@@ -38,12 +43,19 @@ private:
 	char m_firmware_str[20];
 
 	char* m_mac_address;
-	struct sockaddr_rc m_addr;
+	
 
 	unsigned char m_keepalive[1];
 
+#ifdef _WINDOWS
+	_SOCKADDR_BTH m_addr;
+	CRITICAL_SECTION m_send_mutex;
+	HANDLE m_keepalive_thread;
+#else
+	struct sockaddr_rc m_addr;
 	pthread_t m_keepalive_thread;
 	pthread_mutex_t m_send_mutex;
+#endif
 
 	long m_lastcommand_time;
 
@@ -113,6 +125,10 @@ public:
 };
 
 void* ConnectionCheckStub(void* lParam);
+
+#ifdef _WINDOWS
+int str2ba(const char* straddr, BTH_ADDR* btaddr);
+#endif
 
 
 #endif

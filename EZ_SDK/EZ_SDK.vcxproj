@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D089CF61-B593-46F4-85E6-82088904E6D1}</ProjectGuid>
+    <RootNamespace>EZ_SDK</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ADC.h" />
+    <ClInclude Include="BlinkM.h" />
+    <ClInclude Include="BV4113.h" />
+    <ClInclude Include="BV4615.h" />
+    <ClInclude Include="CompassDirection.h" />
+    <ClInclude Include="Configuration.h" />
+    <ClInclude Include="Digital.h" />
+    <ClInclude Include="EZB.h" />
+    <ClInclude Include="HC_SR04.h" />
+    <ClInclude Include="I2C.h" />
+    <ClInclude Include="Movement.h" />
+    <ClInclude Include="MP3Trigger.h" />
+    <ClInclude Include="PWM.h" />
+    <ClInclude Include="Servo.h" />
+    <ClInclude Include="SureDualAxisCompass.h" />
+    <ClInclude Include="Tone.h" />
+    <ClInclude Include="Uart.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="windows_ports.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ADC.cpp" />
+    <ClCompile Include="BlinkM.cpp" />
+    <ClCompile Include="BV4113.cpp" />
+    <ClCompile Include="BV4615.cpp" />
+    <ClCompile Include="CompassDirection.cpp" />
+    <ClCompile Include="Configuration.cpp" />
+    <ClCompile Include="Digital.cpp" />
+    <ClCompile Include="EZB.cpp" />
+    <ClCompile Include="HC_SR04.cpp" />
+    <ClCompile Include="I2C.cpp" />
+    <ClCompile Include="Movement.cpp" />
+    <ClCompile Include="MP3Trigger.cpp" />
+    <ClCompile Include="PWM.cpp" />
+    <ClCompile Include="Servo.cpp" />
+    <ClCompile Include="SureDualAxisCompass.cpp" />
+    <ClCompile Include="Tone.cpp" />
+    <ClCompile Include="Uart.cpp" />
+    <ClCompile Include="windows_ports.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EZ_SDK.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

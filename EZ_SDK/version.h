@@ -8,10 +8,15 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK_VERSION_NUM "0.0.0.9\0"
-#define EZSDK_VERSION_NUM 0,0,0,9
+#define STR_EZSDK_VERSION_NUM "0.0.0.10\0"
+#define EZSDK_VERSION_NUM 0,0,0,10
 
 
+/// Tom		14/05/2012	0.0.0.10
+/// + windows_ports: Required code for windows dll to build
+/// + Resource file for windows dll versioning
+/// * various fixes for warnings given by visual studio compiler
+///
 /// Tom		13/05/2012	0.0.0.9
 /// * EZB: Added a mutex lock around the internal of SendCommand
 /// * ADC: Fixed storing last_values in char not unsigned char

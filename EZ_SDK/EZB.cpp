@@ -22,7 +22,11 @@ EZB::EZB(){
 EZB::~EZB(){
 	m_exit = true;
 	if(m_keepalive_thread){
+#ifdef _WINDOWS
+		WaitForSingleObject(m_keepalive_thread, INFINITE);
+#else
 		pthread_join(m_keepalive_thread, NULL);
+#endif
 		m_keepalive_thread = 0;
 	}
 	Disconnect();
@@ -57,10 +61,15 @@ void EZB::Connect(char* mac_address){
 	m_socket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 
 	// set the connection parameters (who to connect to)
+#ifdef _WINDOWS
+	m_addr.addressFamily = AF_BLUETOOTH;
+	m_addr.port = 1;
+	str2ba(m_mac_address, &m_addr.btAddr);
+#else
 	m_addr.rc_family = AF_BLUETOOTH;
 	m_addr.rc_channel = (uint8_t) 1;
 	str2ba( m_mac_address, &m_addr.rc_bdaddr );
-
+#endif
 	// connect to server
 	int status = connect(m_socket, (struct sockaddr *)&m_addr, sizeof(m_addr));
 
@@ -72,7 +81,12 @@ void EZB::Connect(char* mac_address){
 
 	CreateObjects();
 
+#ifdef _WINDOWS
+	InitializeCriticalSection(&m_send_mutex);
+#else
 	pthread_mutex_init(&m_send_mutex, NULL);
+#endif
+
 	m_connected = true;
 
 	SendCommand(EZB::Ping);
@@ -83,8 +97,11 @@ void EZB::Connect(char* mac_address){
 	if(!KeepAlive())
 		throw std::runtime_error("Controller not responding");
 
-
+#ifdef _WINDOWS
+	m_keepalive_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ConnectionCheckStub, (void*)this, NULL, 0);
+#else
 	pthread_create(&m_keepalive_thread, NULL, ConnectionCheckStub, (void*)this);
+#endif
 
 
 }
@@ -140,7 +157,12 @@ unsigned char* EZB::SendCommand(unsigned char command, int expected_ret_bytes){
 
 unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int num_args, int expected_ret_bytes){
 
+#ifdef _WINDOWS
+	EnterCriticalSection(&m_send_mutex);
+#else
 	pthread_mutex_lock(&m_send_mutex);
+#endif
+
 	unsigned char* bytestosend = (unsigned char*)malloc(sizeof(unsigned char) * (1 + num_args));
 
 	bytestosend[0] = command;
@@ -160,7 +182,7 @@ unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int 
 		throw std::runtime_error("Not connected");
 
 
-	write(m_socket, (void*)bytestosend, num_args+1);
+	send(m_socket, (char*)bytestosend, num_args+1, 0);
 	struct timespec now;
 	clock_gettime(1, &now);
 	m_lastcommand_time = (now.tv_sec * 1000) + (now.tv_nsec / 1000000);
@@ -175,7 +197,7 @@ unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int 
 
 		retval = new unsigned char[expected_ret_bytes];
 		memset(retval, 0, expected_ret_bytes);
-		read(m_socket, retval, expected_ret_bytes);
+		recv(m_socket, (char*)retval, expected_ret_bytes, 0);
 
 		if(m_verbose){
 			printf("Received: ");
@@ -184,7 +206,11 @@ unsigned char* EZB::SendCommand(unsigned char command, unsigned char* args, int 
 			printf("\n");
 		}
 	}
+#ifdef _WINDOWS
+	LeaveCriticalSection(&m_send_mutex);
+#else
 	pthread_mutex_unlock(&m_send_mutex);
+#endif
 
 	return retval;
 }
@@ -232,3 +258,23 @@ void* ConnectionCheckStub(void* lParam){
 	((EZB*)lParam)->ConnectionCheck();
 	return NULL;
 }
+
+#ifdef _WINDOWS
+/* Convert mac address string to BTH_ADDR */
+int str2ba(const char* straddr, BTH_ADDR* btaddr)
+{
+	int i;
+	unsigned int aaddr[6 ];
+	BTH_ADDR tmpaddr = 0;
+
+	if (sscanf(straddr, "%02x:%02x:%02x:%02x:%02x:%02x", &aaddr[0], &aaddr[1], &aaddr[2], &aaddr[3], &aaddr[4], &aaddr[5]) != 6)
+		return -1;
+    
+	*btaddr = 0;
+	for (i = 0; i < 6; i++) {
+		tmpaddr = (BTH_ADDR) (aaddr[i ] & 0xff);
+		*btaddr = ((*btaddr) << 8) + tmpaddr;
+	}
+	return 0;
+}
+#endif

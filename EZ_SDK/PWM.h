@@ -9,7 +9,7 @@ class PWMClass{
 private:
 	EZB* m_ezb;
 	int m_pwmPositions[34];
-	int m_pwmReleased[34];
+	bool m_pwmReleased[34];
 public:
 	static const char PWM_MAX = 100;
 	static const char PWM_MIN = 0;

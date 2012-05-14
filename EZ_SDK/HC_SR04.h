@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include "Digital.h"
+#include "windows_ports.h"
 
 class EZB;
 
@@ -12,7 +13,7 @@ private:
 	struct timespec m_last_request[22];
 	unsigned char m_last_value[22];
 public:
-	static const char MAX_VALUE = 255;
+	static const unsigned char MAX_VALUE = 255;
 
 	HC_SR04Class(EZB* ezb);
 	//

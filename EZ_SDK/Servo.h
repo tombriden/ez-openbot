@@ -33,18 +33,18 @@ public:
 	};
 
 	typedef struct{
-		long last_move_time;
+		unsigned long last_move_time;
 		char curr_pos;
 		char curr_speed;
 		bool isreleased;
 	}servo_info;
 
-	static const char SERVO_CENTER = 70;
-	static const char SERVO_MAX = 140;
-	static const char SERVO_MIN = 1;
-	static const char SERVO_OFF = 0;
-	static const char SERVO_SPEED_FASTEST = 0;
-	static const char SERVO_SPEED_SLOWEST = 10;
+	static const unsigned char SERVO_CENTER = 70;
+	static const unsigned char SERVO_MAX = 140;
+	static const unsigned char SERVO_MIN = 1;
+	static const unsigned char SERVO_OFF = 0;
+	static const unsigned char SERVO_SPEED_FASTEST = 0;
+	static const unsigned char SERVO_SPEED_SLOWEST = 10;
 
 	ServoClass(EZB* ezb);
 	double GetNumberOfSecondsSinceLastMove(ServoPortEnum servoPort);

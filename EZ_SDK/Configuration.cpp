@@ -51,10 +51,12 @@ void ConfigurationClass::SetConfiguration(ConfigurationEnum memoryPosition, unsi
 
 void ConfigurationClass::SetConfiguration(StringConfigurationEnum memoryPosition, unsigned char maxLength, unsigned char* value){
 
-	unsigned char args[maxLength + 1];
+	unsigned char* args = (unsigned char*)malloc(sizeof(unsigned char) * (maxLength + 1));
 	args[0] = memoryPosition;
 	memset(&args[1], 20, maxLength);
 	memcpy(&args[1], value, maxLength);
 
 	m_ezb->SendCommand(EZB::WriteConfiguration, args, maxLength+1);
+
+	free(args);
 }

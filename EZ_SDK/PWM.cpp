@@ -15,7 +15,7 @@ int PWMClass::GetPWM(DigitalClass::DigitalPortEnum pwmPort){
 }
 
 bool PWMClass::IsPWMStopped(DigitalClass::DigitalPortEnum pwmPort){
-	return m_pwmReleased[(int) pwmPort];
+	return m_pwmReleased[pwmPort];
 }
 
 void PWMClass::SetPWM(DigitalClass::DigitalPortEnum pwmPort, int position)
