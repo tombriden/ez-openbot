@@ -121,7 +121,7 @@ public:
   char* GetFirmwareVersion();
   double GetFirmwareVersionRaw();
   void ConnectionCheck();
-  static char* VersionNumber();
+  static const char* VersionNumber();
 };
 
 void* ConnectionCheckStub(void* lParam);

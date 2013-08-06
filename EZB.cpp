@@ -250,7 +250,7 @@ void EZB::ConnectionCheck(){
   }
 }
 
-char* EZB::VersionNumber(){
+const char* EZB::VersionNumber(){
   return STR_EZ_OPENBOT_VERSION_NUM;
 }
 

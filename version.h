@@ -8,8 +8,8 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define STR_EZSDK_VERSION_NUM "0.0.0.10\0"
-#define EZSDK_VERSION_NUM 0,0,0,10
+#define STR_EZ_OPENBOT_VERSION_NUM "0.0.0.10\0"
+#define EZ_OPENBOT_VERSION_NUM 0,0,0,10
 
 
 /// Tom    14/05/2012  0.0.0.10
