@@ -18,8 +18,8 @@
 #define write send
 
 struct timespec{
-	time_t   tv_sec;   
-	long     tv_nsec;  
+  time_t   tv_sec;   
+  long     tv_nsec;  
 };
 
 LARGE_INTEGER getFILETIMEoffset();

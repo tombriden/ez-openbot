@@ -6,13 +6,13 @@
 class EZB;
 class SureDualAxisCompassClass{
 private:
-	EZB* m_ezb;
+  EZB* m_ezb;
 public:
-	SureDualAxisCompassClass(EZB* ezb);
-	unsigned char ReadAddress;
-	unsigned char WriteAddress;
+  SureDualAxisCompassClass(EZB* ezb);
+  unsigned char ReadAddress;
+  unsigned char WriteAddress;
 
-	CompassDirection GetCompassDirection();
+  CompassDirection GetCompassDirection();
 };
 
 #endif

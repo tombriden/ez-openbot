@@ -6,18 +6,18 @@
 class EZB;
 class UartClass{
 private:
-	EZB* m_ezb;
+  EZB* m_ezb;
 public:
-	enum BAUD_RATE_ENUM{
-		Baud_9600,
-		Baud_19200,
-		Baud_38400,
-		Baud_57600,
-		Baud_115200
-	};
+  enum BAUD_RATE_ENUM{
+    Baud_9600,
+    Baud_19200,
+    Baud_38400,
+    Baud_57600,
+    Baud_115200
+  };
 
-	UartClass(EZB* ezb);
-	void SendSerial(DigitalClass::DigitalPortEnum digitalPort, BAUD_RATE_ENUM baudRate, unsigned char* data, int len);
+  UartClass(EZB* ezb);
+  void SendSerial(DigitalClass::DigitalPortEnum digitalPort, BAUD_RATE_ENUM baudRate, unsigned char* data, int len);
 };
 
 #endif

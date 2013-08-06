@@ -7,27 +7,27 @@ class EZB;
 
 class BV4615Response{
 public:
-	unsigned char Byte1;
-	bool IsValid;
-	bool Toggle;
-	unsigned char Value;
+  unsigned char Byte1;
+  bool IsValid;
+  bool Toggle;
+  unsigned char Value;
 
-	BV4615Response(bool toggle, bool isValid, unsigned char byte1, unsigned char byte2);
+  BV4615Response(bool toggle, bool isValid, unsigned char byte1, unsigned char byte2);
 };
 
 class BV4615Class{
 private:
-	EZB* m_ezb;
-	unsigned char m_speed;
+  EZB* m_ezb;
+  unsigned char m_speed;
 public:
-	unsigned char ReadAddress;
-	unsigned char WriteAddress;
+  unsigned char ReadAddress;
+  unsigned char WriteAddress;
 
 
-	BV4615Class(EZB* ezb);
+  BV4615Class(EZB* ezb);
 
-	BV4615Response GetData();
-	unsigned char* GetFirmware();
+  BV4615Response GetData();
+  unsigned char* GetFirmware();
 };
 
 

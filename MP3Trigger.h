@@ -8,16 +8,16 @@ class EZB;
 
 class MP3Trigger{
 private:
-	EZB* m_ezb;
-	UartClass::BAUD_RATE_ENUM BaudRate;
-	DigitalClass::DigitalPortEnum CommunicationPort;
+  EZB* m_ezb;
+  UartClass::BAUD_RATE_ENUM BaudRate;
+  DigitalClass::DigitalPortEnum CommunicationPort;
 public:
-	MP3Trigger(EZB* ezb);
-	void Forward();
-	void PlayTrack(unsigned char trackNumber);
-	void Reverse();
-	void SetVolume(unsigned char volume);
-	void StartStop();
+  MP3Trigger(EZB* ezb);
+  void Forward();
+  void PlayTrack(unsigned char trackNumber);
+  void Reverse();
+  void SetVolume(unsigned char volume);
+  void StartStop();
 };
 
 #endif

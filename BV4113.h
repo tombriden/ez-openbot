@@ -6,15 +6,15 @@
 class EZB;
 class BV4113Class{
 private:
-	EZB* m_ezb;
-	unsigned char m_speed;
+  EZB* m_ezb;
+  unsigned char m_speed;
 public:
-	BV4113Class(EZB* ezb);
-	void Forward();
-	void Left();
-	void Reverse();
-	void Right();
-	void Stop();
+  BV4113Class(EZB* ezb);
+  void Forward();
+  void Left();
+  void Reverse();
+  void Right();
+  void Stop();
 };
 
 

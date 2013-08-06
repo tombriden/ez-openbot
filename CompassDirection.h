@@ -5,10 +5,10 @@
 class CompassDirection{
 private:
 public:
-	short X;
-	short Y;
+  short X;
+  short Y;
 
-	CompassDirection(short x, short y);
+  CompassDirection(short x, short y);
 };
 
 #endif
