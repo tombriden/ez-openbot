@@ -66,8 +66,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION EZSDK_VERSION_NUM
- PRODUCTVERSION EZSDK_VERSION_NUM
+ FILEVERSION EZ_OPENBOT_VERSION_NUM
+ PRODUCTVERSION EZ_OPENBOT_VERSION_NUM
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -82,14 +82,14 @@ BEGIN
     BEGIN
         BLOCK "080904b0"
         BEGIN
-            VALUE "CompanyName", ""
-            VALUE "FileDescription", "EZ-B SDK"
-            VALUE "FileVersion", STR_EZSDK_VERSION_NUM
-            VALUE "InternalName", "EZ_SDK"
+            VALUE "CompanyName", "EZ-Robot"
+            VALUE "FileDescription", "EZ-B OpenSource SDK"
+            VALUE "FileVersion", STR_EZ_OPENBOT_VERSION_NUM
+            VALUE "InternalName", "EZ-OpenBot"
             VALUE "LegalCopyright", "Copyright (C) 2012"
-            VALUE "OriginalFilename", "EZ_SDK.dll"
-            VALUE "ProductName", "EZ-Robot SDK"
-            VALUE "ProductVersion", STR_EZSDK_VERSION_NUM
+            VALUE "OriginalFilename", "EZ-OpenBot.dll"
+            VALUE "ProductName", "EZ-Robot OpenSource SDK"
+            VALUE "ProductVersion", STR_EZ_OPENBOT_VERSION_NUM
         END
     END
     BLOCK "VarFileInfo"

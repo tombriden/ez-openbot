@@ -130,7 +130,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="EZ_SDK.rc">
+    <ResourceCompile Include="ez-openbot.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

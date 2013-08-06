@@ -251,7 +251,7 @@ void EZB::ConnectionCheck(){
 }
 
 char* EZB::VersionNumber(){
-  return STR_EZSDK_VERSION_NUM;
+  return STR_EZ_OPENBOT_VERSION_NUM;
 }
 
 void* ConnectionCheckStub(void* lParam){
